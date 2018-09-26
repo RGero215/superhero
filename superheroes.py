@@ -266,47 +266,76 @@ class Arena:
         """
         This method should allow user to build team two.
         """
+        self.team_two = Team(input("Enter the name of your Team: "))
+        add_hero = self.done("Would you like to add a superhero to Team {} Y/N: ".format(self.team_two.name))
+        while  add_hero != "done":
+            hero = Hero(input("Enter the name of your hero: "))
+            name = input("Enter name of the ability: ")
+            strength = input("Enter the strenght of the ability: ")
+            ability = Ability(name, int(strength))
+            hero.add_ability(ability)
+            self.team_two.add_hero(hero)
+            add_hero = self.done("Would you like to add another hero Y/N: ")
+        else:
+            if self.team_two.heroes != []:
+                print("Team {} is ready to fight and this are the members: ".format(self.team_two.name))
+                for hero in self.team_two.heroes:
+                    print(hero.name)
+            else:
+                print("Your team is empty. please add at least a superhero to Team {}".format(self.team_two.name))
+                add_hero = "Y"
 
     def team_battle(self):
         """
         This method should continue to battle teams until 
         one or both teams are dead.
         """
+        if self.team_one == [] or self.team_two == []:
+            return
+        self.team_one.attack(self.team_two)
+        self.team_two.attack(self.team_one)
+
 
     def show_stats(self):
         """
         This method should print out the battle statistics 
         including each heroes kill/death ratio.
         """
+        print("Team One: ", self.team_one.stats())
+        print("==============================================")
+        print("Team Two: ", self.team_two.stats())
+
+
     def done(self, prompt):
         done = input(prompt)
-        if done == "N":
+        if done.lower() == "N":
             return "done"
         else:
             return done
 
 if __name__ == "__main__":
-    # hero = Hero("Wonder Woman")
-    # print(hero.attack())
-    # ability = Ability("Divine Speed", 300)
-    # hero.add_ability(ability)
-    # print(hero.attack())
-    # new_ability = Ability("Super Human Strength", 800)
-    # hero.add_ability(new_ability)
-    # print(hero.attack())
-    # hero_weapon = Weapon("Bracellette", 500)
-    # team = Team("One")
-    # print(team.find_hero("Alexa"))
-    # print(team.find_hero("Alexa") == 0)
-    # jodie = Hero("Jodie Foster")
-    # team.add_hero(jodie)
-    # print(team.heroes[0].name)
-    # print(team.remove_hero("Athena") == 0)
-    # print(team.find_hero("Alexa") == 0)
-    # print(team.heroes[0].name == "Jodie Foster")
-    # print(team.find_hero("Jodie Foster"))
-    # print(len(team.heroes) == 0)
-    # team.view_all_heroes()
-    # print(team.heroes[0].name)
-    Arena().build_team_one()
+    
+    game_is_running = True
+
+    # Instantiate Game Arena
+    arena = Arena()
+
+    #Build Teams
+    arena.build_team_one()
+    arena.build_team_two()
+
+    while game_is_running:
+
+        arena.team_battle()
+        arena.show_stats()
+        play_again = input("Play Again? Y or N: ")
+
+        #Check for Player Input
+        if play_again.lower() == "n":
+            game_is_running = False
+
+        else:
+            #Revive heroes to play again
+            arena.team_one.revive_heroes()
+            arena.team_two.revive_heroes()
     
